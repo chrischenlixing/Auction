@@ -1,36 +1,37 @@
 
 import AWS from "aws-sdk";
-import middy from "@middy/core";
-import httpErrorHandler from "@middy/http-error-handler";
-import httpJsonBodyParser from "@middy/http-json-body-parser";
-import httpEventNormalizer from "@middy/http-event-normalizer";
+import commonMiddleware from "../lib/commonMiddleware";
 import createHttpError from "http-errors";
 
 const dynamodb = new AWS.DynamoDB.DocumentClient();
 
-async function getAuction(event, context) {
-    let auctions;
-    const { id } = event.pathParameters;
+export async function getAuctionById(id) {
+    let auction;
     try {
         const result = await dynamodb.get({
             TableName: process.env.AUCTIONS_TABLE_NAME,
             Key: { id },
         }).promise();
-        auctions = result.Item;
+        auction = result.Item;
     } catch (error) {
         console.error(error);
         throw new createHttpError.InternalServerError(error);
     }
 
-    if (!auctions) {
+    if (!auction) {
         throw new createHttpError.NotFound(`Auction with ID "${id}" not found!`);
     }
+
+    return auction;
+}
+
+async function getAuction(event, context) {
+    const { id } = event.pathParameters;
+    const auction = await getAuctionById(id);
 
     return {
         statusCode: 200,
         body: JSON.stringify(auctions),
     };
 }
-export const handler = middy(getAuction)
-.use(httpEventNormalizer())
-.use(httpErrorHandler());
+export const handler = commonMiddleware(getAuction);
