@@ -3,6 +3,7 @@ import AWS from "aws-sdk";
 import commonMiddleware from "../lib/commonMiddleware";
 import createHttpError from "http-errors";
 
+
 const dynamodb = new AWS.DynamoDB.DocumentClient();
 
 export async function getAuctionById(id) {
@@ -31,7 +32,7 @@ async function getAuction(event, context) {
 
     return {
         statusCode: 200,
-        body: JSON.stringify(auctions),
+        body: JSON.stringify(auction),
     };
 }
-export const handler = commonMiddleware(getAuction);
+export const handler = commonMiddleware(getAuction)

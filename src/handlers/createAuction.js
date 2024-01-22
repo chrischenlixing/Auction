@@ -3,17 +3,23 @@ import AWS from "aws-sdk";
 import commonMiddleware from "../lib/commonMiddleware";
 import createHttpError from "http-errors";
 import jsonBodyParser from "@middy/http-json-body-parser";
+import validator from "@middy/validator";
+import createAuctionSchema from "../lib/schemas/createAuctionSchema";
 
 const dynamodb = new AWS.DynamoDB.DocumentClient();
 
 async function createAuction(event, context) {
   const { title } = event.body;
   const now = new Date();
+  const endDate = new Date();
+  endDate.setHours(now.getHours() + 1);
+
   const auction = {
     id: uuid(),
     title,
     status: "OPEN",
     createdAt: now.toISOString(),
+    endingAt: endDate.toISOString(),
     highestBid: {
       amount: 0,
     },
@@ -37,5 +43,5 @@ async function createAuction(event, context) {
     body: JSON.stringify(auction),
   };
 }
-export const handler = commonMiddleware(createAuction).use(jsonBodyParser());
+export const handler = commonMiddleware(createAuction).use(jsonBodyParser()).use(validator({ eventSchema: createAuctionSchema }));
 
