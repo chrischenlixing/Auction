@@ -12,8 +12,10 @@ provider:
   lambdaHashingVersion: 20201221
   environment:
     AUCTIONS_TABLE_NAME: ${self:custom.AuctionsTable.name}
+    MAIL_QUEUE_URL: ${self:custom.MailQueue.url}
   iamRoleStatements:
     - ${file(iam/AuctionsTableIAM.yml):AuctionsTableIAM}
+    - ${file(iam/MailQueueIAM.yml):MailQueueIAM}
 
 
 resources:
@@ -80,6 +82,10 @@ custom:
     arn: !GetAtt AuctionsTable.Arn
   bundle:
     linting: false
+  MailQueue: 
+    arn: ${cf:notification-service-${self:provider.stage}.MailQueueArn}
+    url: ${cf:notification-service-${self:provider.stage}.MailQueueUrl}
+
 
 package:
   exclude:

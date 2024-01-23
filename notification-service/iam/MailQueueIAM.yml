@@ -1,0 +1,6 @@
+MailQueueIAM:
+  Effect: Allow
+  Action:
+    - sqs:ReceiveMessage
+  Resource:
+    - Fn::GetAtt: [MailQueue, Arn]

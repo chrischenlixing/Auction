@@ -1,0 +1,19 @@
+{
+  "name": "notification-service",
+  "version": "1.0.0",
+  "description": "Codingly template for Serverless Framework projects",
+  "author": "Ariel Weinberger <ariel@codingly.io>",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.18.0",
+    "babel-loader": "^8.0.0", 
+    "@babel/plugin-transform-runtime": "^7.18.0",
+    "@babel/preset-env": "^7.18.0",
+    "serverless-bundle": "^6.1.0", 
+    "webpack": "^5.72.0"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.1200.0",
+    "lodash": "^4.17.21"
+  }
+}
