@@ -1,0 +1,7 @@
+curl --location --request POST 'https://dev-q8dyclguszojflxi.us.auth0.com/oauth/token' \
+--header 'Content-Type: application/x-www-form-urlencoded' \
+--data-urlencode 'client_id=fKCZX6ehs1gbpgEK4776DKiYLZxYyZvZ' \
+--data-urlencode 'username=chrischenlixing@gmail.com' \
+--data-urlencode 'password=980724Clxlyc!' \
+--data-urlencode 'grant_type=password' \
+--data-urlencode 'scope=openid'
