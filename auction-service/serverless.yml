@@ -1,4 +1,4 @@
-service: ChriscuctionService
+service: auction-service
 
 plugins:
   - serverless-bundle
@@ -13,15 +13,19 @@ provider:
   environment:
     AUCTIONS_TABLE_NAME: ${self:custom.AuctionsTable.name}
     MAIL_QUEUE_URL: ${self:custom.MailQueue.url}
+    AUCTIONS_BUCKET_NAME: ${self:custom.AuctionsBucket.name}
   iamRoleStatements:
     - ${file(iam/AuctionsTableIAM.yml):AuctionsTableIAM}
     - ${file(iam/MailQueueIAM.yml):MailQueueIAM}
+    - ${file(iam/AuctionsBucketIAM.yml):AuctionsBucketIAM}
 
 
 resources:
   Resources:
     AuctionsTable: ${file(resources/AuctionsTable.yml):AuctionsTable}
-  
+    AuctionsBucket: ${file(resources/AuctionsBucket.yml):AuctionsBucket}
+    AuctionsBucketPolicy: ${file(resources/AuctionsBucket.yml):AuctionsBucketPolicy}
+
 functions:
   createAuction:
     handler: src/handlers/createAuction.handler
@@ -69,6 +73,16 @@ functions:
             managedExternally: false
             type: token
             identitySource: method.request.header.Authorization
+
+  uploadAuctionPicture:
+    handler: src/handlers/uploadAuctionPicture.handler
+    events:
+      - http:
+          method: PATCH
+          path: /auction/{id}/picture
+          authorizer: ${self:custom.authorizer}
+
+
             
   processAuctions:
     handler: src/handlers/processAuctions.handler
@@ -85,6 +99,9 @@ custom:
   MailQueue: 
     arn: ${cf:notification-service-${self:provider.stage}.MailQueueArn}
     url: ${cf:notification-service-${self:provider.stage}.MailQueueUrl}
+  AuctionsBucket:
+    name: auctions-bucket-chrischenlixing-${self:provider.stage}
+    arn: !GetAtt AuctionsBucket.Arn
 
 
 package:
